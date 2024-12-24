@@ -14,11 +14,13 @@ formatter = logging.Formatter('[%(asctime)s] - %(name)s - %(levelname)s - %(mess
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-PATH_METRIC_CONFIGS = "params/metrics/"
+PATH_METRIC_CONFIGS = "params/metrics/" # "params/metrics/default/" , "params/metrics/todo/" todo указать в
+
 DEFAULT_ESTIMATOR = "t_test_linearization"
 DEFAULT_METRIC_TYPE = "ratio"
 DEFAULT_UNIT_LEVEL = "client_id"
 DEFAULT_VALUE = "Unknown"
+
 VARIANT_COL = "experiment_variant"
 USER_ID_COL = "client_id"
 

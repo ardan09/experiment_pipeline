@@ -5,7 +5,7 @@ import utils
 import config as cfg
 from itertools import product
 from metric_builder import Metric, CalculateMetric
-from stattests import TTestFromStats, calculate_statistics, calculate_linearization
+from stattests import TTestFromStats, MWTestFromStats, PropTestFromStats, calculate_statistics, calculate_linearization
 
 
 class Report:
@@ -15,12 +15,21 @@ class Report:
 
 class BuildMetricReport:
     def __call__(self, calculated_metric, metric_items) -> Report:
-        ttest = TTestFromStats()
+        ## ARDAN SOLUTION
+        if metric_items.estimator in ['t_test', 't_test_linearization']:
+            test_criteria = TTestFromStats() # ttest
+        elif metric_items.estimator == 'mann_whitney':
+            test_criteria = MWTestFromStats() # mw test
+        elif metric_items.estimator == 'prop_test':
+            test_criteria = PropTestFromStats() # proportion test
+        else:
+            raise ValueError("stat criteria is not defined. Choose ttest, mann-whitney or proportion test")
+
         cfg.logger.info(f"{metric_items.name}")
 
         df_ = calculate_linearization(calculated_metric)
         stats = calculate_statistics(df_, metric_items.type)
-        criteria_res = ttest(stats)
+        criteria_res = test_criteria(stats)
 
         report_items = pd.DataFrame({
             "metric_name": metric_items.name,
@@ -30,6 +39,7 @@ class BuildMetricReport:
             "var_1": stats.var_1,
             "delta": stats.mean_1 - stats.mean_0,
             "lift":  (stats.mean_1 - stats.mean_0) / stats.mean_0,
+            "criteria": metric_items.estimator, ## ARDAN SOLUTION
             "pvalue": criteria_res.pvalue,
             "statistic": criteria_res.statistic
         }, index=[0])

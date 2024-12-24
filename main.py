@@ -13,17 +13,18 @@ logger = cfg.logger
 start_time = time.time()
 
 # скачайте отдельно https://drive.google.com/file/d/1f-HM6v5HQFrQ8Rn8DmWz9G4NF4uTbo4x/view?usp=share_link
-# df = pd.read_parquet(f'data/parquet/df.parquet')
+df = pd.read_parquet(f'data/parquet/df.parquet')
+# print(df.head())
+# print(df.columns)
 
 # Мини-версия таблицы с данными по эксперименту, количество строк = 10000
-df = pd.read_csv("data/csv/df_sample.csv")
+# df = pd.read_csv("data/csv/df_sample.csv")
 logger.info("Data loaded")
 
 experiment_report = build_experiment_report(
     df=df,
-    metric_config=_load_yaml_preset()
+    metric_config=_load_yaml_preset("todo") # можно указать todo внутри, тогда буду взяты метрики из todo папки. Если оставить пустым, то будут браться из default
 )
 experiment_report.to_csv(f"experiment_report.csv")
 
 cfg.logger.info(time.time() - start_time)
-# ARDAN
